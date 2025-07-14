@@ -32,6 +32,79 @@ Criar um sistema web que permita:
 
 📌 Projeto em fase inicial. O desenvolvimento será feito nos próximos dias conforme as especificações do desafio.
 
+## 🗃️ Estrutura do Banco de Dados
+
+O sistema utiliza um banco de dados relacional (MySQL). A seguir, a descrição de cada entidade:
+
+### 🔹 usuarios
+
+Armazena os dados de todas as pessoas que usam o sistema.
+
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| id | INT (PK) | Identificador único |
+| nome | VARCHAR(255) | Nome do usuário |
+| email | VARCHAR(255) | Email único |
+| senha | VARCHAR(255) | Senha criptografada |
+| tipo | ENUM | Papel: `unidade`, `avaliador`, `camara` |
+| criado_em | DATETIME | Data de criação |
+
+Relacionamentos:
+- 1:N com propostas_curso → como autor, avaliador ou decisor final
+
+### 🔹 propostas_curso
+
+Representa uma proposta de criação de curso.
+
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| id | INT (PK) | Identificador |
+| nome | VARCHAR(255) | Nome do curso |
+| carga_horaria_total | INT | Carga horária total |
+| quantidade_semestres | INT | Quantidade de semestres |
+| justificativa | TEXT | Justificativa do curso |
+| impacto_social | TEXT | Impacto social |
+| autor_id | INT (FK) | Usuário que criou a proposta |
+| avaliador_id | INT (FK) | Usuário que avaliou |
+| decisor_final_id | INT (FK) | Usuário que decidiu |
+
+Relacionamentos:
+- N:1 com usuarios
+- 1:N com disciplinas
+- 1:N com historico_status_proposta
+
+### 🔹 disciplinas
+
+Disciplinas da grade curricular da proposta.
+
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| id | INT (PK) | Identificador |
+| curso_id | INT (FK) | Proposta à qual pertence |
+| nome | VARCHAR(255) | Nome da disciplina |
+| carga_horaria | INT | Carga horária |
+| semestre | INT | Semestre ofertado |
+
+### 🔹 historico_status_proposta
+
+Histórico de status de uma proposta.
+
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| id | INT (PK) | Identificador |
+| proposta_id | INT (FK) | Proposta relacionada |
+| status | ENUM | `submetida`, `em_avaliacao`, etc. |
+| data_status | DATETIME | Data do status |
+| observacao | TEXT | Observação ou justificativa |
+
+---
+
+### 🔗 Relacionamentos Resumidos
+
+- `usuarios` → `propostas_curso` (via `autor_id`, `avaliador_id`, `decisor_final_id`)
+- `propostas_curso` → `disciplinas`
+- `propostas_curso` → `historico_status_proposta`
+
 
 ## 📌 Observação
 
