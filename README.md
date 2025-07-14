@@ -106,9 +106,63 @@ Histórico de status de uma proposta.
 - `propostas_curso` → `historico_status_proposta`
 
 
+## 💻 Como rodar o projeto em outro ambiente
+
+Para rodar o projeto em outro computador com Laravel e MySQL:
+
+1. **Clonar o repositório**
+   ```bash
+   git clone https://github.com/seu-usuario/seu-repositorio.git
+   cd seu-repositorio
+   ```
+
+2. **Instalar as dependências do Laravel**
+   ```bash
+   composer install
+   ```
+
+3. **Copiar e configurar o arquivo `.env`**
+   ```bash
+   cp .env.example .env
+   ```
+   Em seguida, edite as variáveis do banco no `.env`:
+   ```ini
+   DB_DATABASE=nome_do_banco
+   DB_USERNAME=root
+   DB_PASSWORD=sua_senha
+   ```
+
+4. **Gerar a chave da aplicação**
+   ```bash
+   php artisan key:generate
+   ```
+
+5. **Executar as migrations**
+   ```bash
+   php artisan migrate
+   ```
+
+6. **(Opcional) Popular o banco com dados de exemplo**
+   ```bash
+   php artisan db:seed
+   ```
+
+---
+
+## 📘 Models Laravel
+
+Cada tabela possui um model Eloquent responsável pelas regras e relacionamentos:
+
+- **Usuario** → representa um usuário do sistema.
+- **PropostaCurso** → representa uma proposta de curso, com ligação a usuários e disciplinas.
+- **Disciplina** → representa uma disciplina vinculada à proposta.
+- **HistoricoStatusProposta** → representa cada atualização de status de uma proposta.
+
+---
+
 ## 📌 Observação
 
-Este repositório faz parte da minha participação no processo seletivo de julho de 2025 para estágio na ASTTIC/PROEG.
+Este repositório faz parte da minha participação no processo seletivo de **julho de 2025** para estágio na **ASTTIC/PROEG**.
 
 ---
 
