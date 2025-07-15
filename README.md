@@ -46,7 +46,7 @@ Armazena os dados de todas as pessoas que usam o sistema.
 | nome | VARCHAR(255) | Nome do usuário |
 | email | VARCHAR(255) | Email único |
 | senha | VARCHAR(255) | Senha criptografada |
-| tipo | ENUM | Papel: `unidade`, `avaliador`, `camara` |
+| tipo | ENUM | Papel: `submissor`, `avaliador`, `camara` |
 | criado_em | DATETIME | Data de criação |
 
 Relacionamentos:
@@ -112,8 +112,8 @@ Para rodar o projeto em outro computador com Laravel e MySQL:
 
 1. **Clonar o repositório**
    ```bash
-   git clone https://github.com/seu-usuario/seu-repositorio.git
-   cd seu-repositorio
+   git clone https://github.com/Mauesjr/Teste-Pratico-Asttic.git
+   cd sistema_ppc
    ```
 
 2. **Instalar as dependências do Laravel**

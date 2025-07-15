@@ -4,41 +4,31 @@ namespace App\Http\Controllers;
 
 use App\Models\PropostaCurso;
 use Illuminate\Http\Request;
+use App\Http\Requests\StorePropostaCursoRequest;
+use App\Http\Requests\AvaliarPropostaCursoRequest;
+use App\Http\Requests\DecidirPropostaCursoRequest;
 
 class PropostaCursoController extends Controller
 {
-    // Listar todas as propostas com disciplinas e autores
+    // Listar todas as propostas com relações
     public function index()
     {
         $propostas = PropostaCurso::with('disciplinas', 'autor', 'avaliador', 'decisorFinal')->get();
-
         return response()->json($propostas);
     }
 
-    // Exibir uma proposta específica com relações
+    // Exibir uma proposta específica
     public function show($id)
     {
         $proposta = PropostaCurso::with('disciplinas', 'autor', 'avaliador', 'decisorFinal')->findOrFail($id);
-
         return response()->json($proposta);
     }
 
-    // Submeter uma nova proposta (submissor)
-    public function store(Request $request)
+    // Submeter nova proposta (submissor)
+    public function store(StorePropostaCursoRequest $request)
     {
-        $validated = $request->validate([
-            'nome' => 'required|string|max:255',
-            'carga_horaria_total' => 'required|integer|min:1',
-            'quantidade_semestres' => 'required|integer|min:1',
-            'justificativa' => 'required|string',
-            'impacto_social' => 'required|string',
-            'disciplinas' => 'required|array|min:1',
-            'disciplinas.*.nome' => 'required|string|max:255',
-            'disciplinas.*.carga_horaria' => 'required|integer|min:1',
-            'disciplinas.*.semestre' => 'required|integer|min:1',
-        ]);
+        $validated = $request->validated();
 
-        // Criar a proposta
         $proposta = PropostaCurso::create([
             'nome' => $validated['nome'],
             'carga_horaria_total' => $validated['carga_horaria_total'],
@@ -46,10 +36,9 @@ class PropostaCursoController extends Controller
             'justificativa' => $validated['justificativa'],
             'impacto_social' => $validated['impacto_social'],
             'status' => 'submitted',
-            'autor_id' => auth()->id() ?? 1, // Fallback para testes
+            'autor_id' => auth()->id() ?? 1, // fallback em testes
         ]);
 
-        // Criar disciplinas associadas
         $proposta->disciplinas()->createMany($validated['disciplinas']);
 
         return response()->json([
@@ -58,63 +47,51 @@ class PropostaCursoController extends Controller
         ], 201);
     }
 
-    // Atualizar status ou adicionar comentários (avaliador e decisor)
-    public function update(Request $request, $id)
+    // Avaliação da proposta (avaliador)
+    public function avaliar(AvaliarPropostaCursoRequest $request, $id)
     {
         $proposta = PropostaCurso::findOrFail($id);
-        $user = auth()->user();
+        $validated = $request->validated();
 
-        $request->validate([
-            'acao' => 'required|in:retornar,encaminhar,aprovar,reprovar',
-            'comentario' => 'nullable|string'
-        ]);
+        $proposta->avaliador_id = auth()->id();
+        $proposta->comentario_avaliador = $validated['comentario'];
 
-        switch ($request->acao) {
-            case 'retornar':
-                if ($user->tipo !== 'avaliador') {
-                    return response()->json(['erro' => 'Acesso negado.'], 403);
-                }
-                $proposta->status = 'changes_required';
-                $proposta->comentario_avaliador = $request->comentario;
-                $proposta->avaliador_id = $user->id;
-                break;
-
-            case 'encaminhar':
-                if ($user->tipo !== 'avaliador') {
-                    return response()->json(['erro' => 'Acesso negado.'], 403);
-                }
-                $proposta->status = 'in_approval';
-                $proposta->comentario_avaliador = $request->comentario;
-                $proposta->avaliador_id = $user->id;
-                break;
-
-            case 'aprovar':
-                if ($user->tipo !== 'decisor') {
-                    return response()->json(['erro' => 'Acesso negado.'], 403);
-                }
-                $proposta->status = 'approved';
-                $proposta->comentario_decisao_final = $request->comentario;
-                $proposta->decisor_final_id = $user->id;
-                $proposta->aprovado_em = now();
-                break;
-
-            case 'reprovar':
-                if ($user->tipo !== 'decisor') {
-                    return response()->json(['erro' => 'Acesso negado.'], 403);
-                }
-                $proposta->status = 'rejected';
-                $proposta->comentario_decisao_final = $request->comentario;
-                $proposta->decisor_final_id = $user->id;
-                $proposta->rejeitado_em = now();
-                break;
+        if ($validated['acao'] === 'retornar') {
+            $proposta->status = 'changes_required';
+        } elseif ($validated['acao'] === 'encaminhar') {
+            $proposta->status = 'in_approval';
         }
 
         $proposta->save();
 
         return response()->json([
-            'mensagem' => 'Status atualizado com sucesso.',
+            'mensagem' => 'Proposta avaliada com sucesso.',
             'proposta' => $proposta
         ]);
     }
 
+    // Decisão final (decisor)
+    public function decidir(DecidirPropostaCursoRequest $request, $id)
+    {
+        $proposta = PropostaCurso::findOrFail($id);
+        $validated = $request->validated();
+
+        $proposta->decisor_final_id = auth()->id();
+        $proposta->comentario_decisao_final = $validated['comentario'];
+
+        if ($validated['decisao'] === 'aprovar') {
+            $proposta->status = 'approved';
+            $proposta->aprovado_em = now();
+        } elseif ($validated['decisao'] === 'reprovar') {
+            $proposta->status = 'rejected';
+            $proposta->rejeitado_em = now();
+        }
+
+        $proposta->save();
+
+        return response()->json([
+            'mensagem' => 'Decisão registrada com sucesso.',
+            'proposta' => $proposta
+        ]);
+    }
 }

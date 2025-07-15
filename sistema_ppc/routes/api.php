@@ -3,16 +3,6 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PropostaCursoController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
-Route::get('/test', function () {
-    echo "Olá, mundo!";
-});
-
-
-
 //Rotas públicas (qualquer usuário pode ver)
 Route::get('/propostas', [PropostaCursoController::class, 'index']);
 Route::get('/propostas/{id}', [PropostaCursoController::class, 'show']);
