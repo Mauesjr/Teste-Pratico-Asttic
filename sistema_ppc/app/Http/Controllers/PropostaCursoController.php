@@ -27,7 +27,7 @@ class PropostaCursoController extends Controller
     // Submeter nova proposta (submissor)
     public function store(StorePropostaCursoRequest $request)
     {
-        \Log::info('DEBUG: Dados recebidos no store', request()->all());
+        // Validação e criação da proposta
         try {
             $validated = $request->validated();
             
@@ -103,5 +103,15 @@ class PropostaCursoController extends Controller
             'mensagem' => 'Decisão registrada com sucesso.',
             'proposta' => $proposta
         ]);
+    }
+    public function indexUsuario(Request $request)
+    {
+        $usuario = $request->user();
+
+        $propostas = PropostaCurso::with('disciplinas') // ou outras relações se quiser
+            ->where('autor_id', $usuario->id)
+            ->get();
+
+        return response()->json($propostas);
     }
 }

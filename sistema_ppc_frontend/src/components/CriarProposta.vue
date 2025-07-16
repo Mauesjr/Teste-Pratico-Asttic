@@ -1,68 +1,102 @@
 <template>
-  <div>
-    <h2>Nova Proposta de Curso</h2>
+  <div class="container py-5">
+    <!-- Logo da ASTTIC centralizado -->
+    <div class="text-center mb-4">
+      <img
+        src="/logo_asttic.png"
+        alt="Logo da ASTTIC"
+        style="max-width: 100px; height: auto;"
+        class="mb-2"
+      />
+    </div>
 
-    <form @submit.prevent="enviarProposta">
-      <div>
-        <label>Nome do curso:</label>
-        <input v-model="nome" required />
-      </div>
+    <div class="card shadow p-4">
+      <h2 class="text-center mb-4">Nova Proposta de Curso</h2>
 
-      <div>
-        <label>Carga horária total:</label>
-        <input v-model.number="cargaHoraria" type="number" required />
-      </div>
+      <form @submit.prevent="enviarProposta">
+        <div class="mb-3">
+          <label class="form-label">Nome do curso:</label>
+          <input v-model="nome" type="text" class="form-control" required />
+        </div>
 
-      <div>
-        <label>Quantidade de semestres:</label>
-        <input v-model.number="quantidadeSemestres" type="number" required />
-      </div>
+        <div class="mb-3">
+          <label class="form-label">Carga horária total:</label>
+          <input v-model.number="cargaHoraria" type="number" class="form-control" required />
+        </div>
 
-      <div>
-        <label>Justificativa:</label><br />
-        <textarea v-model="justificativa" required />
-      </div>
+        <div class="mb-3">
+          <label class="form-label">Quantidade de semestres:</label>
+          <input v-model.number="quantidadeSemestres" type="number" class="form-control" required />
+        </div>
 
-      <div>
-        <label>Impacto social:</label><br />
-        <textarea v-model="impactoSocial" required />
-      </div>
+        <div class="mb-3">
+          <label class="form-label">Justificativa:</label>
+          <textarea v-model="justificativa" class="form-control" rows="3" required></textarea>
+        </div>
 
-      <hr />
-      <h3>Disciplinas</h3>
+        <div class="mb-4">
+          <label class="form-label">Impacto social:</label>
+          <textarea v-model="impactoSocial" class="form-control" rows="3" required></textarea>
+        </div>
 
-      <div>
-        <label>Nome:</label>
-        <input v-model="disciplinaNome" />
-      </div>
-      <div>
-        <label>Carga horária:</label>
-        <input v-model.number="disciplinaCarga" type="number" />
-      </div>
-      <div>
-        <label>Semestre:</label>
-        <input v-model.number="disciplinaSemestre" type="number" />
-      </div>
-      <button type="button" @click="adicionarDisciplina">Adicionar disciplina</button>
+        <hr class="my-4" />
+        <h3 class="mb-3">Disciplinas</h3>
 
-      <ul>
-        <li v-for="(d, index) in disciplinas" :key="index">
-          {{ d.nome }} ({{ d.carga_horaria }}h - {{ d.semestre }}º semestre)
-          <button type="button" @click="removerDisciplina(index)">Remover</button>
-        </li>
-      </ul>
+        <div class="row g-3 align-items-end">
+          <div class="col-md-4">
+            <label class="form-label">Nome:</label>
+            <input v-model="disciplinaNome" type="text" class="form-control" />
+          </div>
 
-      <br />
-      <button type="submit">Enviar Proposta</button>
-    </form>
+          <div class="col-md-3">
+            <label class="form-label">Carga horária:</label>
+            <input v-model.number="disciplinaCarga" type="number" class="form-control" />
+          </div>
 
-    <p v-if="mensagem">{{ mensagem }}</p>
+          <div class="col-md-3">
+            <label class="form-label">Semestre:</label>
+            <input v-model.number="disciplinaSemestre" type="number" class="form-control" />
+          </div>
+
+          <div class="col-md-2">
+            <button type="button" @click="adicionarDisciplina" class="btn btn-success w-100">
+              Adicionar
+            </button>
+          </div>
+        </div>
+
+        <ul class="list-group my-4">
+          <li
+            v-for="(d, index) in disciplinas"
+            :key="index"
+            class="list-group-item d-flex justify-content-between align-items-center"
+          >
+            {{ d.nome }} ({{ d.carga_horaria }}h - {{ d.semestre }}º semestre)
+            <button
+              type="button"
+              class="btn btn-sm btn-danger"
+              @click="removerDisciplina(index)"
+            >
+              Remover
+            </button>
+          </li>
+        </ul>
+
+        <button type="submit" class="btn btn-primary w-100">Enviar Proposta</button>
+      </form>
+
+      <p v-if="mensagem" class="mt-3 text-center text-success fw-bold">{{ mensagem }}</p>
+    </div>
   </div>
 </template>
+
 
 <script lang="ts" setup>
 import { ref } from 'vue'
 import axios from 'axios'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const nome = ref('')
 const cargaHoraria = ref(0)
@@ -70,6 +104,7 @@ const quantidadeSemestres = ref(0)
 const justificativa = ref('')
 const impactoSocial = ref('')
 const mensagem = ref('')
+const tipoMensagem = ref<'sucesso' | 'erro' | ''>('')
 
 // disciplinas
 const disciplinas = ref<{ nome: string; carga_horaria: number; semestre: number }[]>([])
@@ -84,7 +119,6 @@ function adicionarDisciplina() {
       carga_horaria: disciplinaCarga.value,
       semestre: disciplinaSemestre.value,
     })
-    // limpa campos
     disciplinaNome.value = ''
     disciplinaCarga.value = 0
     disciplinaSemestre.value = 1
@@ -100,10 +134,11 @@ async function enviarProposta() {
     const token = localStorage.getItem('token')
     if (!token) {
       mensagem.value = 'Usuário não autenticado.'
+      tipoMensagem.value = 'erro'
       return
     }
 
-    const resposta = await axios.post(
+    await axios.post(
       'http://127.0.0.1:8000/api/propostas',
       {
         nome: nome.value,
@@ -111,7 +146,7 @@ async function enviarProposta() {
         quantidade_semestres: quantidadeSemestres.value,
         justificativa: justificativa.value,
         impacto_social: impactoSocial.value,
-        disciplinas: disciplinas.value, // importante!
+        disciplinas: disciplinas.value,
       },
       {
         headers: {
@@ -121,9 +156,19 @@ async function enviarProposta() {
     )
 
     mensagem.value = 'Proposta enviada com sucesso!'
+    tipoMensagem.value = 'sucesso'
+
+    // Espera 10 segundos, depois redireciona
+    setTimeout(() => {
+      mensagem.value = ''
+      tipoMensagem.value = ''
+      router.push('/minhas-propostas')
+    }, 10000)
   } catch (erro) {
     console.error(erro)
     mensagem.value = 'Erro ao enviar proposta.'
+    tipoMensagem.value = 'erro'
+
   }
 }
 </script>
