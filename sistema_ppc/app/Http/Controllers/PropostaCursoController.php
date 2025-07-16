@@ -69,9 +69,9 @@ class PropostaCursoController extends Controller
         $proposta->comentario_avaliador = $validated['comentario'];
 
         if ($validated['acao'] === 'retornar') {
-            $proposta->status = 'changes_required';
+            $proposta->status = 'mudanças_requeridas';
         } elseif ($validated['acao'] === 'encaminhar') {
-            $proposta->status = 'in_approval';
+            $proposta->status = 'em_aprovacao';
         }
 
         $proposta->save();

@@ -23,3 +23,7 @@ Route::middleware(['auth:sanctum', 'role:decisor'])->group(function () {
 
 // Login
 Route::post('/login', [AuthController::class, 'login']);
+
+Route::get('/ping', function () {
+    return response()->json(['message' => 'pong']);
+});
