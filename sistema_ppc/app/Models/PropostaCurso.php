@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class PropostaCurso extends Model
 {
@@ -20,9 +20,12 @@ class PropostaCurso extends Model
         'comentario_decisor',
         'autor_id',
         'avaliador_id',
-        'decisor_final_id'
+        'decisor_final_id',
+        'status'
     ];
-     public function disciplinas()
+    public $timestamps = false;
+
+    public function disciplinas()
     {
         return $this->hasMany(Disciplina::class, 'curso_id');
     }

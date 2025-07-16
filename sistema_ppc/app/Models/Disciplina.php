@@ -17,6 +17,7 @@ class Disciplina extends Model
         'carga_horaria',
         'semestre'
     ];
+    public $timestamps = false;
 
     public function curso()
     {

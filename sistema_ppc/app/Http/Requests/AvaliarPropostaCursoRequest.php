@@ -14,7 +14,7 @@ class AvaliarPropostaCursoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'comentarios_avaliador' => 'required|string',
+            'comentario_decisor' => 'required|string',
             'acao' => 'required|in:retornar,encaminhar',
         ];
     }

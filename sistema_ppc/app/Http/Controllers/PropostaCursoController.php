@@ -27,25 +27,37 @@ class PropostaCursoController extends Controller
     // Submeter nova proposta (submissor)
     public function store(StorePropostaCursoRequest $request)
     {
-        $validated = $request->validated();
+        \Log::info('DEBUG: Dados recebidos no store', request()->all());
+        try {
+            $validated = $request->validated();
+            
 
-        $proposta = PropostaCurso::create([
-            'nome' => $validated['nome'],
-            'carga_horaria_total' => $validated['carga_horaria_total'],
-            'quantidade_semestres' => $validated['quantidade_semestres'],
-            'justificativa' => $validated['justificativa'],
-            'impacto_social' => $validated['impacto_social'],
-            'status' => 'submitted',
-            'autor_id' => auth()->id() ?? 1, // fallback em testes
-        ]);
+            $proposta = PropostaCurso::create([
+                'nome' => $validated['nome'],
+                'carga_horaria_total' => $validated['carga_horaria_total'],
+                'quantidade_semestres' => $validated['quantidade_semestres'],
+                'justificativa' => $validated['justificativa'],
+                'impacto_social' => $validated['impacto_social'],
+                'status' => 'submitted',
+                'autor_id' => auth()->id() ?? 1,
+            ]);
 
-        $proposta->disciplinas()->createMany($validated['disciplinas']);
+            if (!empty($validated['disciplinas'])) {
+                $proposta->disciplinas()->createMany($validated['disciplinas']);
+            }
 
-        return response()->json([
-            'mensagem' => 'Proposta criada com sucesso!',
-            'proposta' => $proposta->load('disciplinas')
-        ], 201);
+            return response()->json([
+                'mensagem' => 'Proposta criada com sucesso!',
+                'proposta' => $proposta->load('disciplinas')
+            ], 201);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'erro' => 'Erro ao criar proposta',
+                'mensagem' => $e->getMessage(),
+            ], 422);
+        }
     }
+
 
     // Avaliação da proposta (avaliador)
     public function avaliar(AvaliarPropostaCursoRequest $request, $id)
@@ -77,14 +89,12 @@ class PropostaCursoController extends Controller
         $validated = $request->validated();
 
         $proposta->decisor_final_id = auth()->id();
-        $proposta->comentario_decisao_final = $validated['comentario'];
+        $proposta->comentario_decisor = $validated['comentario_decisor'];
 
         if ($validated['decisao'] === 'aprovar') {
             $proposta->status = 'approved';
-            $proposta->aprovado_em = now();
         } elseif ($validated['decisao'] === 'reprovar') {
             $proposta->status = 'rejected';
-            $proposta->rejeitado_em = now();
         }
 
         $proposta->save();

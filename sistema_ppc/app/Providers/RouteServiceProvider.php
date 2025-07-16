@@ -4,17 +4,19 @@ namespace App\Providers;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
+use App\Http\Middleware\RoleMiddleware;
 
 class RouteServiceProvider extends ServiceProvider
 {
-    /**
-     * Define as rotas do aplicativo.
-     */
-    public function boot(): void
+    public function boot()
     {
+        // ✅ Registra o middleware com nome "role"
+        Route::aliasMiddleware('role', RoleMiddleware::class);
+
+        // ✅ Aqui você registra as rotas
         $this->routes(function () {
-            Route::middleware('api')
-                ->prefix('api')
+            Route::prefix('api')
+                ->middleware('api')
                 ->group(base_path('routes/api.php'));
 
             Route::middleware('web')

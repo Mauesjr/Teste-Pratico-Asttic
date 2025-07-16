@@ -14,8 +14,8 @@ class DecidirPropostaCursoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'comentarios_decisor' => 'nullable|string',
-            'decisao' => 'required|in:aprovada,rejeitada',
+            'comentario_decisor' => 'nullable|string',
+            'decisao' => 'required|in:aprovar,rejeitar',
         ];
     }
 }

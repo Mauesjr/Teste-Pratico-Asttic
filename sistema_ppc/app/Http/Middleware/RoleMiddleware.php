@@ -8,20 +8,18 @@ use Symfony\Component\HttpFoundation\Response;
 
 class RoleMiddleware
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     */
-        public function handle($request, \Closure $next, ...$tiposPermitidos)
+    public function handle(Request $request, Closure $next, ...$roles): Response
     {
-        $usuario = auth()->user();
+        $user = auth()->user();
 
-        if (!$usuario || !in_array($usuario->tipo, $tiposPermitidos)) {
+        if (!$user) {
+            return response()->json(['erro' => 'Não autenticado.'], 401);
+        }
+
+        if (!in_array($user->tipo, $roles)) {
             return response()->json(['erro' => 'Acesso não autorizado.'], 403);
         }
 
         return $next($request);
     }
-
 }

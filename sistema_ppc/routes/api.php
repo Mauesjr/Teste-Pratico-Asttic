@@ -1,23 +1,25 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PropostaCursoController;
 
-//Rotas públicas (qualquer usuário pode ver)
+// Rotas públicas
 Route::get('/propostas', [PropostaCursoController::class, 'index']);
 Route::get('/propostas/{id}', [PropostaCursoController::class, 'show']);
 
-// Somente submissor pode criar propostas
+// Autenticadas por papel
 Route::middleware(['auth:sanctum', 'role:submissor'])->group(function () {
     Route::post('/propostas', [PropostaCursoController::class, 'store']);
 });
 
-// Somente avaliador pode avaliar propostas
 Route::middleware(['auth:sanctum', 'role:avaliador'])->group(function () {
     Route::put('/propostas/{id}/avaliar', [PropostaCursoController::class, 'avaliar']);
 });
 
-// Somente decisor pode aprovar ou rejeitar
 Route::middleware(['auth:sanctum', 'role:decisor'])->group(function () {
     Route::put('/propostas/{id}/decidir', [PropostaCursoController::class, 'decidir']);
 });
+
+// Login
+Route::post('/login', [AuthController::class, 'login']);

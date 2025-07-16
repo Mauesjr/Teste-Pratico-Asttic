@@ -28,9 +28,6 @@ Criar um sistema web que permita:
 - **MySQL** – Banco de dados
 - **Git/GitHub** – Controle de versão
 
-## Status do projeto
-
-📌 Projeto em fase inicial. O desenvolvimento será feito nos próximos dias conforme as especificações do desafio.
 
 ## 🗃️ Estrutura do Banco de Dados
 
@@ -159,10 +156,49 @@ Cada tabela possui um model Eloquent responsável pelas regras e relacionamentos
 - **HistoricoStatusProposta** → representa cada atualização de status de uma proposta.
 
 ---
+## 📌 Funcionalidades Implementadas
+
+Este sistema gerencia o processo de criação e avaliação de propostas de cursos de graduação. As principais funcionalidades são:
+
+### 📝 Submissão de Propostas
+Usuários com o papel de `submissor` podem:
+- Criar propostas de cursos contendo:
+  - Nome do curso
+  - Carga horária total
+  - Número de semestres
+  - Justificativa
+  - Impacto social
+  - Disciplinas organizadas por semestre
+
+### 🔍 Avaliação Técnica
+Usuários com o papel de `avaliador` podem:
+- Acessar propostas submetidas
+- Adicionar comentários técnicos (`comentario_avaliador`)
+- Definir uma ação:
+  - `retornar` (necessita alterações)
+  - `encaminhar` (seguir para decisão)
+
+### ✅ Decisão Final
+Usuários com o papel de `decisor` podem:
+- Acessar propostas encaminhadas para decisão
+- Adicionar comentários finais (`comentario_decisor`)
+- Definir uma decisão:
+  - `aprovar` (proposta aprovada)
+  - `reprovar` (proposta rejeitada)
+
+### 🔐 Controle de Acesso por Papéis
+- Cada tipo de usuário (`submissor`, `avaliador`, `decisor`) tem acesso apenas às funcionalidades específicas do seu papel.
+- Middleware personalizado garante essa separação de permissões.
+
+### 💾 Armazenamento e Persistência
+- Informações como status da proposta, autor, avaliador, decisor e comentários são devidamente persistidas no banco de dados.
+
 
 ## 📌 Observação
 
 Este repositório faz parte da minha participação no processo seletivo de **julho de 2025** para estágio na **ASTTIC/PROEG**.
+
+
 
 ---
 
