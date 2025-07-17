@@ -17,7 +17,7 @@ Route::middleware(['auth:sanctum', 'role:submissor'])->group(function () {
 // Avaliador autenticado
 Route::middleware(['auth:sanctum', 'role:avaliador'])->group(function () {
     Route::put('/propostas/{id}/avaliar', [PropostaCursoController::class, 'avaliar']);
-    Route::get('/propostas-para-avaliar', [PropostaCursoController::class, 'propostasParaAvaliar']); // ✅ nova rota etapa 2
+    Route::get('/propostas-para-avaliar', [PropostaCursoController::class, 'propostasParaAvaliar']);
 });
 
 // Decisor autenticado

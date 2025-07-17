@@ -114,4 +114,10 @@ class PropostaCursoController extends Controller
 
         return response()->json($propostas);
     }
+    public function propostasParaAvaliar()
+    {
+        $propostas = PropostaCurso::with('disciplinas', 'autor', 'avaliador',   'decisorFinal')->get();
+        return response()->json($propostas);
+    }
+
 }

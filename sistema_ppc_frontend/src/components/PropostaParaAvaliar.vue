@@ -25,7 +25,7 @@
               <td>{{ p.justificativa }}</td>
               <td>{{ p.impacto_social }}</td>
               <td>
-                <!-- Aqui você pode adicionar um botão para abrir detalhes ou avaliar diretamente -->
+                <button class="btn btn-secondary btn-sm" @click="avaliarProposta(p.id)">Visualizar</button>
                 <button class="btn btn-primary btn-sm" @click="avaliarProposta(p.id)">Avaliar</button>
               </td>
             </tr>
@@ -44,8 +44,14 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
+import { useRouter } from 'vue-router'
 
 const propostas = ref([])
+const router = useRouter()
+
+async function avaliarProposta(id) {
+  router.push(`/avaliar/${id}`)
+}
 
 onMounted(async () => {
   try {
