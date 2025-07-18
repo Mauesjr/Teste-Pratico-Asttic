@@ -15,7 +15,7 @@ class DecidirPropostaCursoRequest extends FormRequest
     {
         return [
             'comentario_decisor' => 'nullable|string',
-            'decisao' => 'required|in:aprovar,rejeitar',
+            'decisao' => 'required|in:aprovar,reprovar',
         ];
     }
 }
