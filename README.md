@@ -124,9 +124,9 @@ Para rodar o projeto em outro computador com Laravel e MySQL:
    ```
    Em seguida, edite as variáveis do banco no `.env`:
    ```ini
-   DB_DATABASE=nome_do_banco
+   DB_DATABASE=laravel
    DB_USERNAME=root
-   DB_PASSWORD=sua_senha
+   DB_PASSWORD=
    ```
 
 4. **Gerar a chave da aplicação**
