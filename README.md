@@ -145,7 +145,12 @@ Para rodar o projeto em outro computador com Laravel e MySQL:
    ```
 
 ---
-
+Para Iniciar o Vue.js :
+1. **Mudar para a pasta de aplicação**
+  ```bash
+  cd sistema_ppc_frontend
+  npm run dev
+   ```
 ## 📘 Models Laravel
 
 Cada tabela possui um model Eloquent responsável pelas regras e relacionamentos:
