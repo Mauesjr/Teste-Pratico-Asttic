@@ -139,7 +139,7 @@ Para rodar o projeto em outro computador com Laravel e MySQL:
    php artisan migrate
    ```
 
-6. **(Opcional) Popular o banco com dados de exemplo**
+6. **Popular o banco com dados de exemplo**
    ```bash
    php artisan db:seed
    ```
@@ -192,6 +192,53 @@ Usuários com o papel de `decisor` podem:
 
 ### 💾 Armazenamento e Persistência
 - Informações como status da proposta, autor, avaliador, decisor e comentários são devidamente persistidas no banco de dados.
+
+# 🔐 Credenciais de Acesso
+
+Use as credenciais abaixo para acessar o sistema com diferentes papéis de usuário.  
+**Todos os usuários utilizam a mesma senha: `senha123`.**
+
+| Tipo de Usuário | E-mail                     | Senha     |
+|-----------------|----------------------------|-----------|
+| Submissor       | submissor1@exemplo.com     | senha123  |
+| Avaliador       | avaliador1@exemplo.com     | senha123  |
+| Decisor         | decisor1@exemplo.com       | senha123  |
+
+---
+
+# 🌐 Rotas por Tipo de Usuário
+
+A seguir, estão listadas as rotas disponíveis na API para cada tipo de usuário, considerando o controle de acesso via **token (Bearer Token)**.
+
+---
+
+## 🔵 Submissor
+
+| Verbo | Rota                                | Descrição                          |
+|-------|-------------------------------------|------------------------------------|
+| POST  | `/api/login`                        | Login no sistema                   |
+| POST  | `/api/propostas`                    | Submeter uma nova proposta         |
+| GET   | `/api/minhas-propostas`             | Listar propostas do usuário        |
+| GET   | `/api/propostas/{id}/corrigir`      | Ver formulário de correção         |
+| PUT   | `/api/propostas/{id}/corrigir`      | Submeter correção de proposta      |
+
+---
+
+## 🟠 Avaliador
+
+| Verbo | Rota                                | Descrição                                 |
+|-------|-------------------------------------|-------------------------------------------|
+| GET   | `/api/propostas-para-avaliar`       | Listar propostas disponíveis para avaliação |
+| PUT   | `/api/propostas/{id}/avaliar`       | Avaliar proposta (retornar ou encaminhar) |
+
+---
+
+## 🔴 Decisor
+
+| Verbo | Rota                                | Descrição                               |
+|-------|-------------------------------------|-----------------------------------------|
+| GET   | `/api/propostas-para-decisao`       | Listar todas as propostas para decisão  |
+| PUT   | `/api/propostas/{id}/decidir`       | Aprovar ou Reprovar proposta            |
 
 
 ## 📌 Observação
