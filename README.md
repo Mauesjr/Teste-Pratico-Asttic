@@ -143,14 +143,25 @@ Para rodar o projeto em outro computador com Laravel e MySQL:
    ```bash
    php artisan db:seed
    ```
-
+7. **Inicie o Servidor Laravel**
+  ```bash
+  php artisan serve
+  ```
 ---
 Para Iniciar o Vue.js :
 1. **Mudar para a pasta de aplicação**
-  ```bash
-  cd sistema_ppc_frontend
-  npm run dev
+   ```bash
+   cd sistema_ppc_frontend
+   npm install
    ```
+2. **Rodar o servidor Vue**
+  ```bash
+   npm run dev
+   ```
+---
+
+Com os dois servidores rodando, basta acessar o servidor do Vue para visualizar o sistema.
+
 ## 📘 Models Laravel
 
 Cada tabela possui um model Eloquent responsável pelas regras e relacionamentos:
