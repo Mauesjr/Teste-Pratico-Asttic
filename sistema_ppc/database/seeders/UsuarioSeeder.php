@@ -31,7 +31,7 @@ class UsuarioSeeder extends Seeder
             ],
             [
                 'nome' => 'decisor1',
-                'email' => 'decisor1@examplo.com',
+                'email' => 'decisor1@exemplo.com',
                 'senha' => Hash::make('senha123'),
                 'tipo' => 'decisor',
                 'criado_em' => now(),

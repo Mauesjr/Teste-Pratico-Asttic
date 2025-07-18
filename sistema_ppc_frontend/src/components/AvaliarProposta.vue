@@ -1,7 +1,7 @@
 <template>
   <div class="container py-5">
     <div class="text-center mb-4">
-      <img src="/logo_asttic.png" alt="Logo ASTTIC" style="max-width: 80px;" />
+      <img src="/logo_asttic.png" alt="Logo ASTTIC" style="max-width: 100px;" />
     </div>
 
     <div class="card shadow p-4">
@@ -55,10 +55,19 @@
             </select>
           </div>
 
-          <button type="submit" class="btn btn-primary">Enviar Avaliação</button>
+          <div class="text-center">
+            <button type="submit" class="btn btn-primary">Enviar Avaliação</button>
+          </div>
         </form>
 
-        <div v-if="mensagem" class="alert alert-info mt-3 text-center">
+        <div
+          v-if="mensagem"
+          :class="[
+            'mt-3',
+            'text-center',
+            mensagem.includes('sucesso') ? 'alert alert-success' : 'alert alert-danger'
+          ]"
+        >
           {{ mensagem }}
         </div>
       </div>
@@ -85,13 +94,18 @@ const acao = ref('')
 const mensagem = ref('')
 
 async function carregarProposta() {
-  const token = localStorage.getItem('token')
-  const resposta = await axios.get(`http://127.0.0.1:8000/api/propostas/${propostaId}`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  })
-  proposta.value = resposta.data
+  try {
+    const token = localStorage.getItem('token')
+    const resposta = await axios.get(`http://127.0.0.1:8000/api/propostas/${propostaId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    proposta.value = resposta.data
+  } catch (erro) {
+    console.error('Erro ao carregar proposta:', erro)
+    mensagem.value = 'Erro ao carregar dados da proposta.'
+  }
 }
 
 async function enviarAvaliacao() {
@@ -114,7 +128,7 @@ async function enviarAvaliacao() {
       router.push('/avaliacoes')
     }, 1000)
   } catch (erro) {
-    console.error(erro)
+    console.error('Erro ao enviar avaliação:', erro)
     mensagem.value = 'Erro ao enviar avaliação.'
   }
 }

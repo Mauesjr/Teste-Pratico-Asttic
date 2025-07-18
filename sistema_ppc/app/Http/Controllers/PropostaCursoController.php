@@ -66,7 +66,7 @@ class PropostaCursoController extends Controller
         $validated = $request->validated();
 
         $proposta->avaliador_id = auth()->id();
-        $proposta->comentario_avaliador = $validated['comentario'];
+        $proposta->comentario_avaliador = $validated['comentario_avaliador'];
 
         if ($validated['acao'] === 'retornar') {
             $proposta->status = 'mudanças_requeridas';
@@ -119,5 +119,47 @@ class PropostaCursoController extends Controller
         $propostas = PropostaCurso::with('disciplinas', 'autor', 'avaliador',   'decisorFinal')->get();
         return response()->json($propostas);
     }
+    public function propostasParaDecisao()
+    {
+        $propostas = PropostaCurso::all();
+        return response()->json($propostas);
+    }
+
+    public function corrigir(Request $request, $id)
+    {
+        $proposta = PropostaCurso::with('disciplinas')->findOrFail($id);
+
+        $proposta->nome = $request->nome;
+        $proposta->carga_horaria_total = $request->carga_horaria_total;
+        $proposta->quantidade_semestres = $request->quantidade_semestres;
+        $proposta->justificativa = $request->justificativa;
+        $proposta->impacto_social = $request->impacto_social;
+        $proposta->status = 'pendente_decisao'; // Atualiza status para ir para decisão
+        $proposta->save();
+
+        // Atualiza disciplinas
+        foreach ($request->disciplinas as $disciplinaData) {
+            $disciplina = $proposta->disciplinas()
+                ->where('nome', $disciplinaData['nome'])
+                ->first();
+
+            if ($disciplina) {
+                $disciplina->update($disciplinaData);
+            }
+        }
+
+        return response()->json(['mensagem' => 'Proposta corrigida com sucesso.']);
+    }
+    public function listarPendentesDecisao()
+    {
+        $propostas = PropostaCurso::with('disciplinas')
+            ->where('status', 'pendente_decisao')
+            ->get();
+    
+        return response()->json($propostas);
+    }
+    
+
+
 
 }

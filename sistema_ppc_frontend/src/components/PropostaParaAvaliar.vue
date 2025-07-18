@@ -1,7 +1,7 @@
 <template>
   <div class="container py-5">
     <div class="text-center mb-4">
-      <img src="/logo_asttic.png" alt="Logo ASTTIC" style="max-width: 80px;" />
+      <img src="/logo_asttic.png" alt="Logo ASTTIC" style="max-width: 100px;" />
     </div>
 
     <div class="card shadow p-4">

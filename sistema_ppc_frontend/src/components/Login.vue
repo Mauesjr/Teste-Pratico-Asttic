@@ -7,7 +7,7 @@
           src="/logo_asttic.png"
           alt="Logo da ASTTIC"
           class="mb-2"
-          style="max-width: 80px; height: auto;"
+          style="max-width: 100px; height: auto;"
         />
         <h3 class="mt-2">Bem-vindo</h3>
         <p class="text-muted">Faça login para continuar</p>
@@ -89,7 +89,7 @@ async function fazerLogin() {
     } else if (tipo === 'avaliador') {
       router.push('/avaliacoes')
     } else if (tipo === 'decisor') {
-      router.push('/decisao') // só se você quiser
+      router.push('/propostas-para-decisao') 
     } else {
       mensagem.value = 'Tipo de usuário não reconhecido.'
     }
